@@ -1,27 +1,29 @@
 import React, { useState } from "react";
-
-const listItems = ["A Item"];
+import ToDoItem from "./ToDoItem";
 
 function App() {
-  const [inputData, setInputData] = useState("");
+  const [inputText, setInputText] = useState("");
+  const [items, setItems] = useState([]);
 
   function handleChange(event) {
-    let newValue = event.target.value;
-
-    setInputData((prevValue) => {
-      return newValue;
-    });
+    const newValue = event.target.value;
+    setInputText(newValue);
   }
 
   function addItem() {
-    listItems.push(inputData);
-    console.log(listItems);
-    setInputData("");
+    setItems(prevItems => {
+      return [...prevItems, inputText];
+    });
+    setInputText("");
   }
 
-  const listofItems = listItems.map((item, index) => {
-    return <li key={index}>{item}</li>;
-  });
+  function deleteItem(id) {
+    setItems(prevItems => {
+      return prevItems.filter((item, index) => {
+        return index !== id;
+      });
+    });
+  }
 
   return (
     <div className="container">
@@ -29,13 +31,22 @@ function App() {
         <h1>To-Do List</h1>
       </div>
       <div className="form">
-        <input onChange={handleChange} type="text" value={inputData} />
+        <input onChange={handleChange} type="text" value={inputText} />
         <button onClick={addItem}>
           <span>Add</span>
         </button>
       </div>
       <div>
-        <ul>{listofItems}</ul>
+        <ul>
+          {items.map((todoItem, index) => (
+            <ToDoItem
+              key={index}
+              id={index}
+              text={todoItem}
+              onChecked={deleteItem}
+            />
+          ))}
+        </ul>
       </div>
     </div>
   );
